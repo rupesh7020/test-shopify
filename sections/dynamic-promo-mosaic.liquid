@@ -1,0 +1,375 @@
+<script
+  type="application/json"
+  data-section-id="{{ section.id }}"
+  data-section-type="dynamic-promo-mosaic"
+  data-section-data
+>
+  {
+    "compress_blocks": {{ section.settings.compress_blocks | json }}
+  }
+</script>
+
+<script type="application/pxs-animation-mapping+json">
+  {
+    "blocks": [".promo-block"],
+    "elements": [
+      ".promo-block--header",
+      ".promo-block--text",
+      ".promo-block--button"
+    ]
+  }
+</script>
+
+<section class="promo-mosaic--container">
+  {% if section.settings.title != blank %}
+    <h2 class="home-section--title">
+      {{ section.settings.title | escape }}
+    </h2>
+  {% endif %}
+
+  <div class="home-section--content promo-mosaic--height-{{ section.settings.section_height }}">
+    {% if section.blocks.size > 0 %}
+      <div
+        class="
+          promo-mosaic--inner
+          promo-mosaic--layout-{{ section.blocks.size }}
+          {% if section.settings.compress_blocks %}promo-mosaic--compressed{% endif %}
+          {% if section.settings.maintain_aspect_ratio %}
+          promo-mosaic--maintain-aspect-ratio
+          {% endif %}
+        "
+      >
+      {% for block_item in section.blocks %}
+        {%
+          render 'promo-block',
+          block: block_item,
+          text_alignment: section.settings.text_alignment,
+          compress_blocks: section.settings.compress_blocks,
+          maintain_aspect_ratio: section.settings.maintain_aspect_ratio,
+          index: forloop.index,
+        %}
+      {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  {%
+    render 'promo-block-background',
+    blocks: section.blocks
+  %}
+</section>
+<script>
+    {% if section.settings.show_recently_block %}
+    function getCookie(cname) {
+      let name = cname + "=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(';');
+      for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
+    function renderRV() {
+      const block = document.querySelector(`#shopify-section-{{ section.id }} .promo-block.promo-block--image`);
+      // console.log("block: ", block);
+      // const getImage = block.querySelector("img").src;
+  
+      rv=JSON.parse(sessionStorage.getItem(`pxu-recentlyViewed-${Shopify.currency.active}-/`));
+      rv_html = rv[Object.keys(rv)[1]];
+      // rv_handle = JSON.parse(getCookie('ultimate_recently_viewed'))[0];
+      // rv_html = rv[rv_handle];
+      rv_handles=JSON.parse(localStorage.getItem(`pxu-recentlyViewed-${Shopify.currency.active}-/`));
+      rv_html = rv[rv_handles[rv_handles.length - 1].handle];
+      var doc = new DOMParser().parseFromString(rv_html, "text/html");
+      // console.log("rv_html:", rv_html);
+      const getImage = doc.querySelector('img.productitem--image-primary');
+    
+      // const getImage = document.querySelector('#shopify-section-template--16146931155114__cf8c67c3-4c38-4597-ad0b-9d05fdde6e42 > aside > div > ul > li > div > div > div.productitem__image-container > a > figure > img.productitem--image-alternate').src;
+      // console.log("getImage", getImage);
+      if( typeof getImage != 'undefined' ){
+        console.log("in regex match", block);
+        const urlTemplate = getImage.src;
+        const regex = /_([a-zA-Z0-9]+)\.[a-zA-Z0-9]+(\?|$)/; // Regular expression pattern to match the size value
+        const backClass = block.querySelector('.promo-block--content');
+        backClass.classList.add("backOpacity");
+        const addClass = block.querySelector('.promo-block--content-wrapper');
+  
+        addClass.classList.add("textTop");
+        const match = regex.exec(urlTemplate);
+        const sizeValue = match ? match[1] : null; // Extract the size value from the matched result
+        
+        const match1 = regex.exec(block.style.backgroundImage);
+        const sizeValue1 = match1 ? match1[1] : null; // Extract the size value from the matched result
+        
+        block.style.backgroundImage=`url(${urlTemplate.replace(sizeValue, sizeValue1)})`;
+        block.style.backgroundPosition='100% 0';
+        block.style.backgroundSize='contain';
+        block.style.backgroundColor='transparent';
+        block.querySelector("h2").innerHTML=`{{ 'product.general.recently_viewed_product' | t }}`;
+        if(block.querySelector(".promo-block--text"))
+          block.querySelector(".promo-block--text").innerText=doc.querySelector('.productitem--title a').innerText;
+        else
+          block.querySelector("h2").insertAdjacentHTML('afterend', `<p class="promo-block--text">${doc.querySelector('.productitem--title a').innerText}</p>`)
+        block.querySelector("a").setAttribute("href", doc.querySelector('a').href);
+      } else {
+        console.log("in elssssssssssssssss.");
+      }
+    }
+    
+    // window.onload=function(){
+    document.addEventListener("DOMContentLoaded", (event) => {
+      renderRV();
+    });
+
+  {% comment %}{% endcomment %}
+
+    function watchAnyObject(
+      object = {},
+      methods = [],
+      callbackBefore = function () {},
+      callbackAfter = function () {},
+    ) {
+      for (let method of methods) {
+        const original = object[method].bind(object);
+        const newMethod = function (...args) {
+          callbackBefore(method, ...args);
+          const result = original.apply(null, args);
+          callbackAfter(method, ...args);
+          return result;
+        };
+        object[method] = newMethod.bind(object);
+      }
+    }
+
+  
+    watchAnyObject(
+      window.localStorage,
+      ['setItem', 'removeItem'],
+      (method, key, ...args) => {
+        if(key == `pxu-recentlyViewed-${Shopify.currency.active}-/`) {
+          // console.log(`call ${method} with key ${key} and args ${args}`)
+          renderRV();
+        }
+       },
+    );
+
+    window.addEventListener("storage", (event) => {
+    // When local storage changes, dump the list to
+    // the console.
+    console.log('storage event', event, event.key, event.key == `pxu-recentlyViewed-${Shopify.currency.active}-/`);
+    if(event.key == `pxu-recentlyViewed-${Shopify.currency.active}-/`) {
+      // console.log('storage event', event);
+      setTimeout(function(){ renderRV() }, 100);
+    }
+  });
+  
+  {% endif %}
+</script>
+{% schema %}
+{
+  "name": "t:sections.mosaic.name",
+  "class": "promo-mosaic--section",
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.mosaic.title.label",
+      "default": "Mosaic"
+    },
+    {
+      "id": "section_height",
+      "type": "select",
+      "label": "t:sections.mosaic.section_height.label",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.mosaic.section_height.option_1"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.mosaic.section_height.option_2"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.mosaic.section_height.option_3"
+        }
+      ],
+      "default": "small"
+    },
+    {
+      "id": "text_alignment",
+      "type": "select",
+      "label": "t:sections.mosaic.text_alignment.label",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "t:sections.mosaic.text_alignment.option_1"
+        },
+        {
+          "value": "top-center",
+          "label": "t:sections.mosaic.text_alignment.option_2"
+        },
+        {
+          "value": "top-right",
+          "label": "t:sections.mosaic.text_alignment.option_3"
+        },
+        {
+          "value": "center-left",
+          "label": "t:sections.mosaic.text_alignment.option_4"
+        },
+        {
+          "value": "center-center",
+          "label": "t:sections.mosaic.text_alignment.option_5"
+        },
+        {
+          "value": "center-right",
+          "label": "t:sections.mosaic.text_alignment.option_6"
+        },
+        {
+          "value": "bottom-left",
+          "label": "t:sections.mosaic.text_alignment.option_7"
+        },
+        {
+          "value": "bottom-center",
+          "label": "t:sections.mosaic.text_alignment.option_8"
+        },
+        {
+          "value": "bottom-right",
+          "label": "t:sections.mosaic.text_alignment.option_9"
+        }
+      ],
+      "default": "top-left"
+    },
+    {
+      "id": "maintain_aspect_ratio",
+      "type": "checkbox",
+      "label": "t:sections.mosaic.maintain_aspect_ratio.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.mosaic.header_1.content"
+    },
+    {
+      "id": "compress_blocks",
+      "type": "checkbox",
+      "label": "t:sections.mosaic.compress_blocks.label",
+      "default": false
+    },
+    {
+      "id": "show_recently_block",
+      "type": "checkbox",
+      "label": "Show recently viewed product on 1st block",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promotion",
+      "name": "t:sections.mosaic.blocks.promotional_item.name",
+      "settings": [
+        {
+          "id": "image",
+          "type": "image_picker",
+          "label": "t:sections.mosaic.blocks.promotional_item.image.label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.mosaic.blocks.promotional_item.title.label",
+          "default": "Mosaic"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "t:sections.mosaic.blocks.promotional_item.text.label",
+          "default": "Use this section to welcome customers to your store, say a bit about your brand, or share news."
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "t:sections.mosaic.blocks.promotional_item.color.label",
+          "default": "#4d4d4d"
+        },
+        {
+          "type": "url",
+          "id": "block_link",
+          "label": "t:sections.mosaic.blocks.promotional_item.block_link.label"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "t:sections.mosaic.blocks.promotional_item.button_text.label"
+        },
+        {
+          "id": "button_style",
+          "type": "select",
+          "label": "t:sections.mosaic.blocks.promotional_item.button_style.label",
+          "options": [
+            {
+              "value": "primary",
+              "label": "t:sections.mosaic.blocks.promotional_item.button_style.option_1"
+            },
+            {
+              "value": "secondary",
+              "label": "t:sections.mosaic.blocks.promotional_item.button_style.option_2"
+            }
+          ],
+          "default": "primary"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.mosaic.blocks.promotional_item.header_1.content"
+        },
+        {
+          "id": "show_overlay",
+          "type": "checkbox",
+          "label": "t:sections.mosaic.blocks.promotional_item.show_overlay.label"
+        },
+        {
+          "id": "background",
+          "type": "color",
+          "label": "t:sections.mosaic.blocks.promotional_item.background.label"
+        },
+        {
+          "id": "opacity",
+          "type": "range",
+          "label": "t:sections.mosaic.blocks.promotional_item.opacity.label",
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.mosaic.presets.mosaic.name",
+      "category": "t:sections.mosaic.presets.mosaic.category",
+      "blocks": [
+        {
+          "type": "promotion"
+        },
+        {
+          "type": "promotion"
+        },
+        {
+          "type": "promotion"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["*"]
+  }
+}
+{% endschema %}

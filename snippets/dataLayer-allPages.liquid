@@ -1,0 +1,372 @@
+<script>
+    if (!window.jQuery) {
+        var jqueryScript = document.createElement('script');
+        jqueryScript.setAttribute('src', 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js');
+        document.head.appendChild(jqueryScript);
+    }
+
+    __DL__jQueryinterval = setInterval(function () {
+        // wait for jQuery to load & run script after jQuery has loaded
+        if (window.jQuery) {
+            // search parameters
+            getURLParams = function (name, url) {
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, "\\$&");
+                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            };
+
+            /**********************
+             * DYNAMIC DEPENDENCIES
+             ***********************/
+
+            __DL__ = {
+                dynamicCart: true,  // if cart is dynamic (meaning no refresh on cart add) set to true
+                debug: false, // if true, console messages will be displayed
+                cart: null,
+                wishlist: null,
+                removeCart: null
+            };
+
+            customBindings = {
+                cartTriggers: [],
+                viewCart: [],
+                removeCartTrigger: [],
+                cartVisableSelector: [],
+                promoSubscriptionsSelectors: [],
+                promoSuccess: [],
+                ctaSelectors: [],
+                newsletterSelectors: [],
+                newsletterSuccess: [],
+                searchPage: [],
+                wishlistSelector: [],
+                removeWishlist: [],
+                wishlistPage: [],
+                searchTermQuery: [getURLParams('q')], // replace var with correct query
+            };
+
+            /* DO NOT EDIT */
+            defaultBindings = {
+                cartTriggers: ['form[action="/cart/add"] [type="submit"],.add-to-cart,.cart-btn, .product-form--atc-button'],
+                viewCart: ['form[action="/cart"],.my-cart,.trigger-cart,#mobileCart'],
+                removeCartTrigger: ['[href*="/cart/change"]'],
+                cartVisableSelector: ['.inlinecart.is-active,.inline-cart.is-active'],
+                promoSubscriptionsSelectors: [],
+                promoSuccess: [],
+                ctaSelectors: [],
+                newsletterSelectors: ['input.contact_email'],
+                newsletterSuccess: ['.success_message'],
+                searchPage: ['search'],
+                wishlistSelector: [],
+                removeWishlist: [],
+                wishlistPage: []
+            };
+
+            // stitch bindings
+            objectArray = customBindings;
+            outputObject = __DL__;
+
+            applyBindings = function (objectArray, outputObject) {
+                for (var x in objectArray) {
+                    var key = x;
+                    var objs = objectArray[x];
+                    values = [];
+                    if (objs.length > 0) {
+                        values.push(objs);
+                        if (key in outputObject) {
+                            values.push(outputObject[key]);
+                            outputObject[key] = values.join(", ");
+                        } else {
+                            outputObject[key] = values.join(", ");
+                        }
+                    }
+                }
+            };
+
+            applyBindings(customBindings, __DL__);
+            applyBindings(defaultBindings, __DL__);
+
+            /**********************
+             * PREREQUISITE LIBRARIES
+             ***********************/
+
+            clearInterval(__DL__jQueryinterval);
+
+            // jquery-cookies.js
+            if (typeof $.cookie !== undefined) {
+                (function (a) {
+                    if (typeof define === 'function' && define.amd) {
+                        define(['jquery'], a)
+                    } else if (typeof exports === 'object') {
+                        module.exports = a(require('jquery'))
+                    } else {
+                        a(jQuery)
+                    }
+                }(function ($) {
+                    var g = /\+/g;
+
+                    function encode(s) {
+                        return h.raw ? s : encodeURIComponent(s)
+                    }
+
+                    function decode(s) {
+                        return h.raw ? s : decodeURIComponent(s)
+                    }
+
+                    function stringifyCookieValue(a) {
+                        return encode(h.json ? JSON.stringify(a) : String(a))
+                    }
+
+                    function parseCookieValue(s) {
+                        if (s.indexOf('"') === 0) {
+                            s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\')
+                        }
+                        try {
+                            s = decodeURIComponent(s.replace(g, ' '));
+                            return h.json ? JSON.parse(s) : s
+                        } catch (e) {
+                        }
+                    }
+
+                    function read(s, a) {
+                        var b = h.raw ? s : parseCookieValue(s);
+                        return $.isFunction(a) ? a(b) : b
+                    }
+
+                    var h = $.cookie = function (a, b, c) {
+                        if (arguments.length > 1 && !$.isFunction(b)) {
+                            c = $.extend({}, h.defaults, c);
+                            if (typeof c.expires === 'number') {
+                                var d = c.expires, t = c.expires = new Date();
+                                t.setMilliseconds(t.getMilliseconds() + d * 864e+5)
+                            }
+                            return (document.cookie = [encode(a), '=', stringifyCookieValue(b), c.expires ? '; expires=' + c.expires.toUTCString() : '', c.path ? '; path=' + c.path : '', c.domain ? '; domain=' + c.domain : '', c.secure ? '; secure' : ''].join(''))
+                        }
+                        var e = a ? undefined : {}, cookies = document.cookie ? document.cookie.split('; ') : [], i = 0,
+                            l = cookies.length;
+                        for (; i < l; i++) {
+                            var f = cookies[i].split('='), name = decode(f.shift()), cookie = f.join('=');
+                            if (a === name) {
+                                e = read(cookie, b);
+                                break
+                            }
+                            if (!a && (cookie = read(cookie)) !== undefined) {
+                                e[name] = cookie
+                            }
+                        }
+                        return e
+                    };
+                    h.defaults = {};
+                    $.removeCookie = function (a, b) {
+                        $.cookie(a, '', $.extend({}, b, {expires: -1}));
+                        return !$.cookie(a)
+                    }
+                }))
+            }
+
+            /**********************
+             * Begin dataLayer Build
+             ***********************/
+
+            window.dataLayer = window.dataLayer || [];  // init data layer if doesn't already exist
+
+            var template = "{{ template }}";
+
+            /**
+             * Landing Page Cookie
+             * 1. Detect if user just landed on the site
+             * 2. Only fires if Page Title matches website */
+
+            $.cookie.raw = true;
+            if ($.cookie('landingPage') === undefined || $.cookie('landingPage').length === 0) {
+                var landingPage = true;
+                $.cookie('landingPage', unescape);
+                $.removeCookie('landingPage', {path: '/'});
+                $.cookie('landingPage', 'landed', {path: '/'});
+            } else {
+                var landingPage = false;
+                $.cookie('landingPage', unescape);
+                $.removeCookie('landingPage', {path: '/'});
+                $.cookie('landingPage', 'refresh', {path: '/'});
+            }
+            if (__DL__.debug) {
+                console.log('Landing Page: ' + landingPage);
+            }
+
+            /**
+             * Log State Cookie */
+
+                    {% if customer %}
+            var isLoggedIn = true;
+            {% else %}
+            var isLoggedIn = false;
+            {% endif %}
+            if (!isLoggedIn) {
+                $.cookie('logState', unescape);
+                $.removeCookie('logState', {path: '/'});
+                $.cookie('logState', 'loggedOut', {path: '/'});
+            } else {
+                if ($.cookie('logState') === 'loggedOut' || $.cookie('logState') === undefined) {
+                    $.cookie('logState', unescape);
+                    $.removeCookie('logState', {path: '/'});
+                    $.cookie('logState', 'firstLog', {path: '/'});
+                } else if ($.cookie('logState') === 'firstLog') {
+                    $.cookie('logState', unescape);
+                    $.removeCookie('logState', {path: '/'});
+                    $.cookie('logState', 'refresh', {path: '/'});
+                }
+            }
+
+            if ($.cookie('logState') === 'firstLog') {
+                var firstLog = true;
+            } else {
+                var firstLog = false;
+            }
+
+            /**********************
+             * DATALAYER SECTIONS
+             ***********************/
+
+            /** DATALAYER: Product Page
+             * Fire on all Product View pages. */
+            {% if template contains 'product' %}
+
+            var ecommerce = {
+                'currency': "{{ cart.currency.iso_code }}",
+                'value': parseFloat("{{ product.price | money_without_currency | replace:',','' }}"),
+                'items': [{
+                    'item_id': {{ product.id | json }},
+                    'item_name': {{ product.title | json }},
+                    'item_brand': {{ product.vendor | json }},
+                    'price': parseFloat("{{ product.price | money_without_currency | replace:',','' }}"),
+                    'item_category': {{ product.collections[1].title | json }},
+                    'id': {{ product.id | json }}
+                }]
+            };
+            dataLayer.push({
+                'pageType': 'Product',
+                'event': 'view_item',
+                ecommerce
+            });
+
+            //console.log(ecommerce);
+
+            // $(__DL__.cartTriggers).click(function () {
+                // dataLayer.push({
+                    // 'event': 'add_to_cart',
+                    // ecommerce
+                // });
+
+            });
+            {% endif %}
+
+            {% if template contains 'collection' %}
+                $("[data-quickshop-full]").click(function () {
+                    var product_info = {};
+                    var product_handle = $(this).parents('.productgrid--item').data('product-quickshop-url') + '.js';
+                    $.ajax({
+                        url: window.location.origin + product_handle,
+                        method: 'get',
+                        dataType: 'json',
+                        success: function(data){
+                    	     product_info = {
+                                'currency': "{{ cart.currency.iso_code }}",
+                                'value': parseFloat(((Shopify.formatMoney(data.price)).substring(1)).replace(/[^0-9.]/g, "")),
+                                'items': [{
+                                    'item_id':  data.id.toString(),
+                                    'item_name': data.title,
+                                    'item_brand': data.vendor,
+                                    'price': parseFloat(((Shopify.formatMoney(data.price)).substring(1)).replace(/[^0-9.]/g, "")),
+                                    'id': data.id.toString()
+                                }]
+                             }
+                            dataLayer.push({
+                              'pageType': 'Product',
+                              'event': 'view_item',
+                              product_info
+                            });
+                      
+                            let test = parseFloat(((Shopify.formatMoney(data.price)).substring(1)).replace(/[^0-9.]/g, ""));
+                          
+                        }
+                    });
+                });
+
+                // $('.modal--quickshop-full .product-form--atc-button').click(function () {
+                    // dataLayer.push({
+                        // 'event': 'add_to_cart',
+                        // product_info
+                    // });
+                })
+            {% endif %}
+
+            /** DATALAYER: Checkout on Shopify Plus **/
+            if (Shopify.Checkout) {
+                var ecommerce = {
+                    'currency': {{ checkout.currency | json }},
+                    'value': parseFloat("{{ checkout.total_price | money_without_currency | replace:',','' }}"),
+                    {% for discount in checkout.discounts %}
+                    'coupon': {{ discount.code | json }},
+                    'discount': {{ discount.amount | money_without_currency | json }},
+                    {% endfor %}
+                    'items': [{% for line_item in checkout.line_items %}{
+                        'item_id': {{ line_item.product.id | json }},
+                        'item_name': {{ line_item.product.title | json }},
+                        'item_brand': {{ line_item.product.vendor | json }},
+                        'price': parseFloat("{{ line_item.product.price | money_without_currency | replace:',','' }}"),
+                        'item_category': {{ line_item.product.type | json }},
+                        'quantity': {{ line_item.quantity | json }},
+                        'id': {{ line_item.product.id | json }},
+                    },{% endfor %}],
+                };
+                if (Shopify.Checkout.step) {
+                    if (Shopify.Checkout.step.length > 0) {
+                        if (Shopify.Checkout.step === 'contact_information') {
+                            dataLayer.push({
+                                'event': 'begin_checkout',
+                                'pageType': 'Customer Information',
+                                'step': 1,
+                                ecommerce
+                            });
+
+                            //console.log('%cbegin_checkout event', 'background: #222; color: #bada55');
+                        }
+                    }
+
+                    /** DATALAYER: Transaction */
+                    if (Shopify.Checkout.page == "thank_you") {
+                        dataLayer.push({
+                            'pageType': 'Transaction',
+                            'event': 'purchase',
+                            ecommerce
+                        });
+
+                        //console.log('%cpurchase event', 'background: #222; color: #bada55');
+                    }
+                }
+            }
+
+            /** DOM Ready **/
+            $(document).ready(function () {
+                /** Google Tag Manager **/
+                (function (w, d, s, l, i) {
+                    w[l] = w[l] || [];
+                    w[l].push({
+                        'gtm.start':
+                            new Date().getTime(), event: 'gtm.js'
+                    });
+                    var f = d.getElementsByTagName(s)[0],
+                        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+                    j.async = true;
+                    j.src =
+                        'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+                    f.parentNode.insertBefore(j, f);
+                })(window, document, 'script', 'dataLayer', 'GTM-MLSV7LW');
+
+            }); // document ready
+        }
+    }, 500);
+</script>

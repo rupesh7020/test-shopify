@@ -1,0 +1,48 @@
+{% comment %} minify using https://minify-js.com/ {% endcomment %}
+<script type="text/worker" id="sweworker">onmessage=function(e){postMessage(`window.SwiftOptimize=function(){var e;const t=["mouseover","keydown","touchmove","touchstart","wheel"];var n=performance.getEntriesByType("navigation");const o={bubbles:!0,cancelable:!0};function a(){window.SwiftObserver.disconnect(),n[0].loadEventEnd>0&&void 0!==document.removeEventListeners&&(document.removeEventListeners("DOMContentLoaded"),document.removeEventListeners("load")),t.forEach((function(e){window.removeEventListener(e,a,{passive:!0})})),function(){let e=document.querySelectorAll("script"),t=[];e.forEach((function(e){"text/swescript"===e.getAttribute("type")&&t.push((function(t){!function(e,t){var n=document.createElement("script");n.type="text/javascript",n.async=!1,n.id=e.id||"",Object.assign(n.dataset,e.dataset),e.src?(n.onload=t,n.onerror=t,n.src=e.src):n.textContent=e.innerText;e.parentNode.removeChild(e),document.body.appendChild(n),e.src||t()}(e,t)}))})),i(t,s)}()}function i(e,t,n){e[n=n||0]?e[n]((function(){i(e,t,n+1)})):t()}function s(){if(n[0].loadEventEnd<=0)return;d("DOMContentLoaded"),d("readystatechange"),d("load");const e=new UIEvent("resize",Object.assign({view:window,detail:!1},o));window.dispatchEvent(e),document.dispatchEvent(e)}function d(e,t){t=t||o;const n=new Event(e,t);window.dispatchEvent(n),document.dispatchEvent(n)}return{getInstance:function(){return e||(t.forEach((function(e){console.log("active SWE action >>",e),window.addEventListener(e,a,{passive:!0})})),e=t),e},helper:function(){console.table([["SwiftOptimize.dispatchEventManual('DOMContentLoaded')","Fired when the document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading."],["SwiftOptimize.dispatchEventManual('readystatechange')","The readystatechange event is fired when the readyState attribute of a document has changed. https://developer.mozilla.org/en-US/docs/Web/API/Document/readystatechange_event"],["SwiftOptimize.dispatchEventManual('load')","Fired when the whole page has loaded, including all dependent resources such as stylesheets images."]]),console.log("More detail at https://developer.mozilla.org/en-US/docs/Web/API/Window#events")},dispatchEventManual:d}}(),window.SwiftOptimize.getInstance();`);};</script>
+<!-- raw script block load script to performance page speed score  -->
+
+<script type="text/javascript">var swex = new Worker("data:text/javascript;base64," + btoa(document.getElementById("sweworker").textContent));(swex.onmessage = function (t) {var e = document.createElement("script");(e.type = "text/javascript"),(e.textContent = t.data),document.head.appendChild(e);}),swex.postMessage("init");</script>
+<script type="text/javascript" data-swe="1">
+    (function(){
+        window.SwiftObserver = new MutationObserver((mutations) => {
+            // learn more at: http://www.iana.org/assignments/media-types/media-types.xhtml
+            const scriptTypeAllow = ['application/ld+json'];
+            const tagAllow = ['IMG', 'IFRAME'];
+            mutations.forEach(({ addedNodes }) => {
+                addedNodes.forEach((node) => {
+                    const mainRuleScript = node.nodeType === 1 && node.tagName === 'SCRIPT' && !scriptTypeAllow.includes(node.type);
+                    if(!mainRuleScript && !tagAllow.includes(node.tagName) ) return;
+                    if (mainRuleScript && node.className == 'analytics') {node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.innerHTML.includes('asyncLoad')) {node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.innerHTML.includes('hotjar')) {node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.innerHTML.includes('gtag')) {node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.innerHTML.includes('gtm')) {node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.src.includes('googlet')) {node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.innerHTML.includes('storefront/bars')) {node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.src.includes('storefront/bars')) {node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.innerHTML.includes('loox.io')) {node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.src.includes('loox.io')) { node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.src.includes('ymq')) { node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.src.includes('seal-newyork')) { node.type = 'text/swescript'}
+                    else if (mainRuleScript && node.src.includes('shopifycloud')) { node.type = 'text/swescript'}
+                    // else if (mainRuleScript && node.src.includes('extensions')) { node.type = 'text/swescript'}
+                      
+                    else if (node.tagName === 'IMG') { 
+                        node.loading = 'lazy';
+                        let lazysrc = node.src;
+                        node.setAttribute('lazy-src',lazysrc);
+                        node.src = '';
+                    }
+                });
+            });
+        });
+        const ua = navigator && navigator.userAgent.toString().toLowerCase();
+        if (ua.indexOf("chrome") > -1) {
+            SwiftObserver.observe(document.documentElement, {
+                childList: true,
+                subtree: true,
+            });
+        }
+    })();
+</script>

@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0"
+    >
+    <meta name="referrer" content="origin">
+
+    <title>{{ page_title }}</title>
+ 
+    {{ content_for_header }}
+
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+    <div id="loader" class="loader">
+      <!-- Loader content goes here -->
+      <div class="spinner"></div>
+      <h2>Thank you for shopping with us. We are currently updating your cart. This won't take long.</h2>
+  </div>
+    <style>
+      .mobileview {
+        display: none;
+      }
+      .desktopview {
+        display: block;
+      }
+      .quantity-input {
+        width: 50px;
+        height: 25px;
+        outline: none;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+      }
+
+      #updateqty {
+        width: 100%;
+        height: auto;
+        padding: 15px;
+        margin: 0px;
+        margin-bottom: 20px;
+        display:none;
+      }
+      .order-summary__sections {
+        height: auto;
+      }
+      .loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 9999; /* Make sure the loader is on top of everything */
+    }
+    .loader > h2{
+      color:#FFF;
+      text-align:center;
+      margin: 30px;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
+      width: 40px;
+      height: 40px;
+      animation: spin 2s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+      @media only screen and (max-width: 768px) {
+        .mobileview {
+          display: block;
+        }
+        .desktopview {
+          display: none !important;
+        }
+      }
+    </style>
+    <script>
+      const loader = document.getElementById("loader");
+     
+      function clickupdate(){
+        loader.style.display = "flex";
+        document.querySelector("#updateqty").click();
+      }
+      document.addEventListener('DOMContentLoaded', function () {
+        const orderSummary = document.querySelector('.order-summary__sections');
+        const checkoutFooter = document.querySelector('.step__footer');
+        let bannersWrapper = document.createElement('div');
+        bannersWrapper.classList.add('bannersWrapper');
+        bannersWrapper.classList.add('desktopview');
+        const img1 = document.createElement('img');
+        const img2 = document.createElement('img');
+        const img3 = document.createElement('img');
+        img1.src = 'https://cdn.shopify.com/s/files/1/1126/0898/files/123.png?v=1687420586';
+        img2.src = 'https://cdn.shopify.com/s/files/1/1126/0898/files/1234.png?v=1687420586';
+        img3.src = 'https://cdn.shopify.com/s/files/1/1126/0898/files/12345.png?v=1687420586';
+        bannersWrapper.appendChild(img1);
+        bannersWrapper.appendChild(img2);
+        bannersWrapper.appendChild(img3);
+
+        // if (window.innerWidth >= 1024) {
+        orderSummary.appendChild(bannersWrapper);
+
+        const mainContent = document.querySelector('.main__content');
+        let bannersWrapper2 = document.createElement('div');
+        bannersWrapper2.classList.add('mobileview');
+        const img11 = document.createElement('img');
+        const img22 = document.createElement('img');
+        const img33 = document.createElement('img');
+        img11.src = 'https://cdn.shopify.com/s/files/1/1126/0898/files/123.png?v=1687420586';
+        img22.src = 'https://cdn.shopify.com/s/files/1/1126/0898/files/1234.png?v=1687420586';
+        img33.src = 'https://cdn.shopify.com/s/files/1/1126/0898/files/12345.png?v=1687420586';
+        bannersWrapper2.appendChild(img11);
+        bannersWrapper2.appendChild(img22);
+        bannersWrapper2.appendChild(img33);
+        
+        setTimeout(function () {
+          
+          mainContent.appendChild(bannersWrapper2);
+          // Create the button element
+          const button = document.createElement('button');
+          button.textContent = 'Update cart';
+          button.classList.add('discount-button'); // You can add any custom CSS classes here if needed
+          button.classList.add('field__input-btn'); // You can add any custom CSS classes here if needed
+          button.classList.add('btn'); // You can add any custom CSS classes here if needed
+          button.setAttribute('id', 'updateqty');
+          button.addEventListener('click', () => {
+            this.val = 'Please wait...';
+            var s = document.querySelectorAll('.product');
+            var array = {};
+            s.forEach((cell) => {
+              const variantId = cell.getAttribute('data-variant-id');
+              const quantityInput = cell.querySelector('.product__quantity > .quantity-input');
+              const quantityValue = quantityInput.value;
+
+              array[variantId] = quantityValue;
+            });
+
+            const url = '/cart/update.js';
+            const data = {
+              updates: array,
+            };
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                  console.log(xhr.responseText); // Success response
+                  location.reload();
+                } else {
+                  console.error('Error:', xhr.statusText); // Error handling
+                }
+              }
+            };
+            xhr.send(JSON.stringify(data));
+          });
+          // Get the field__input-wrapper element
+          const inputWrapper = document.querySelector('.order-summary__section.order-summary__section--discount');
+
+          // Insert the button as the first child of the field__input-wrapper
+          inputWrapper.insertBefore(button, inputWrapper.firstChild);
+
+          const quantityCells = document.querySelectorAll('.product__quantity');
+
+          quantityCells.forEach((cell) => {
+            const hiddenSpan = cell.querySelector('.visually-hidden');
+            const initialQuantity = hiddenSpan.textContent.trim();
+
+            cell.innerHTML = `
+    <input type="number" class="quantity-input" onblur="clickupdate()" value="${initialQuantity}" min="0" aria-label="Quantity">
+  `;
+          });
+        }, 10);
+        // } else {
+        // checkoutFooter.after(bannersWrapper);
+        // }
+
+        // window.addEventListener('resize', function() {
+        //   if (window.innerWidth >= 1024) {
+        //     orderSummary.appendChild(bannersWrapper);
+        //   } else {
+        //     checkoutFooter.after(bannersWrapper);
+        //   }
+        // })
+        const element = document.querySelector('.order-summary-toggle');
+        //element.click();
+      });
+    </script>
+    <style>
+      .bannersWrapper {
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+    <script type="text/javascript">
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = 'https://www.clarity.ms/tag/' + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, 'clarity', 'script', 'ikeg4mzbtc');
+    </script>
+  </head>
+  <body>
+    {{ skip_to_content_link }}
+
+    <header class="banner" data-header role="banner">
+      <div class="wrap">
+        {{ content_for_logo }}
+      </div>
+    </header>
+
+    {{ order_summary_toggle }}
+    <div class="content" data-content>
+      <div class="wrap">
+        <div class="main">
+          <header class="main__header" role="banner">
+            {{ content_for_logo }}
+            {{ breadcrumb }}
+            {{ alternative_payment_methods }}
+          </header>
+          <main class="main__content" role="main">
+            {{ content_for_layout }}
+          </main>
+          <footer class="main__footer" role="contentinfo">
+            {{ content_for_footer }}
+          </footer>
+        </div>
+        <aside class="sidebar" role="complementary">
+          <div class="sidebar__header">
+            {{ content_for_logo }}
+          </div>
+          <div class="sidebar__content">
+            {{ content_for_order_summary }}
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    {{ tracking_code }}
+  </body>
+</html>

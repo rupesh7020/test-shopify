@@ -1,0 +1,89 @@
+<div class="product-text">
+               <span id="myButton"> {{ returntext }}</span>
+                <div id="tooltip">
+                   <span id="close" style='font-size:11px;float: right;cursor: pointer;'>&#10006;</span>
+                  {{ pop_up }}
+                <div class="a-arrow-border" style="left: 266.5px;"><div class="a-arrow"></div></div>
+                </div>
+              </div>
+            <style>
+            .product-text{
+                position:relative;
+            }
+           .tooltip p{
+                margin: 0;
+             font-size: 14px;
+             line-height: 20px;
+              }
+/*             #tooltip::after{
+                content: "";
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: transparent transparent black transparent;
+            } */
+            .a-arrow-border {
+              top: 0;
+              margin-left: -8px;
+              border-top: 0;
+              border-bottom-color: #BBBFBF;
+          }
+            .a-arrow-border {
+              position: absolute;
+              border: 8px solid transparent;
+          }
+            .a-arrow-bottom .a-arrow {
+              top: 1px;
+              right: -8px;
+              border-top: 0;
+              border-bottom-color: #fff;
+          }
+            .a-arrow {
+              width: 0;
+              height: 0;
+              position: absolute;
+              display: block;
+              z-index: 1011;
+          }
+            .a-arrow, .a-arrow-border {
+              border: 8px solid transparent;
+          }
+            #myButton{
+                cursor: pointer;
+                color: #046e82;
+            }
+            #tooltip {
+                display: none;
+                position: absolute;
+                background-color: #fdfdfd;
+                color: #111;
+                padding: 10px;
+                border: 1px solid #ccc;
+                width: 100%;
+                max-width: 300px;
+                min-height: 70px;
+/*                 left: -40px; */
+                top: 22px;
+                box-shadow: 0 1px 4px #80808040;
+              }
+              #tooltip.show {
+                display: block;
+              }
+            </style>
+            <script>
+            // Get the button and tooltip elements
+              const button = document.getElementById("myButton");
+              const tooltip = document.getElementById("tooltip");
+              const close = document.getElementById('close');
+              // Add a click event listener to the button
+              button.addEventListener("click", function () {
+                // Toggle the visibility of the tooltip
+                tooltip.classList.toggle("show");
+              });
+              close.addEventListener('click', function(){
+                tooltip.classList.toggle("show");
+              })
+            </script>

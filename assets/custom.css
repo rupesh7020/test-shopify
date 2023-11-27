@@ -1,0 +1,15 @@
+button.shopify-payment-button__more-options::after {
+     content: 'Buy Now';
+    color: #fff !important;
+    text-align: center;
+    display: block !important;
+    font-size: 16px;
+    background: #f04f36;
+    margin-top: 10px;
+    padding: 14px;
+    border-radius: 3px;
+}
+button.shopify-payment-button__more-options.BUz42FHpSPncCPJ4Pr_f {
+    font-size: 0px;
+    color: #fff;
+}

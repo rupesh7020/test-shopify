@@ -1,0 +1,517 @@
+<style>
+.twlbutton{
+z-index: 999999;
+background-color: #2f317d;
+color: #ffffff;
+padding: 10px;
+text-align: center;
+    cursor: pointer;
+    border-radius: .25rem;
+    font-weight: 400;
+    border: 1px solid transparent;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+.twlbutton:hover{
+box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+}
+
+.twlleft{
+  position: fixed;
+  left: -2px;
+  top: 100px;
+  cursor: pointer;
+}
+.twlright{
+  position: fixed;
+  top: 100px;
+  right: -2px;
+  cursor: pointer;
+}
+
+.twlbottomleft{
+  position: fixed;
+  bottom: -2px;
+  left: 100px;
+}
+
+.twlbottomright{
+  position: fixed;
+  bottom: -2px;
+  right: 100px;
+}
+#thewatchlystalertButtonSvg {
+  display: none;
+}
+
+#thewatchlystalertButtonMobile {
+  display: none;
+}
+
+
+
+@media  only screen and (max-width: 600px) {
+  
+       .twlbutton{
+      display: none;
+      }
+
+      .twlinline{
+      display: block;
+      }
+
+
+    
+  
+
+
+
+}
+</style>
+
+
+
+
+{% if product.tags contains 'twl-hidden' %}
+
+{% endif %}
+
+{% if product.metafields.thewatchlyst["isblacklist"] == 1 %} 
+
+{% else %}
+<div id="thewatchlystalertButtonSvg" style="padding: 5px 5px 1px 5px;border-radius: .25rem;"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 699.428 699.428" style="enable-background:new 0 0 699.428 699.428;" xml:space="preserve"> <g> <g id="Bell"> <g> <path d="M618.666,487.262c-42.119-36.414-72.238-133.176-72.238-246.833c0-86.03-55.298-158.967-132.235-185.676 C409.013,23.715,382.216,0,349.714,0c-32.501,0-59.298,23.715-64.479,54.752C208.298,81.461,153,154.399,153,240.429 c0,113.636-30.097,210.374-72.238,246.833c-23.518,20.35-37.048,49.9-37.048,81.023c0,36.219,29.354,65.572,65.571,65.572 h174.857c0,36.217,29.354,65.57,65.571,65.57c36.217,0,65.571-29.354,65.571-65.57h174.857c36.217,0,65.571-29.354,65.571-65.572 C655.714,537.184,642.206,507.611,618.666,487.262z M109.285,568.285c0-12.064,5.246-23.539,14.36-31.43 c58.555-50.621,94.925-164.213,94.925-296.427c0-72.325,58.818-131.143,131.143-131.143s131.143,58.818,131.143,131.143 c0,132.214,36.37,245.806,94.926,296.427c9.137,7.912,14.36,19.365,14.36,31.43H109.285z" ></path> </g> </g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg><div></div></div>
+
+{% endif %}
+
+
+
+<script>
+
+var thewatchlyst_isblacklist = '';
+var  thewatchlyst_position    = '';
+
+{% if product.metafields.thewatchlyst["isblacklist"]%} 
+thewatchlyst_isblacklist = {{ product.metafields.thewatchlyst["isblacklist"] }};
+{% endif %}
+
+
+var thewatchlyst_blacklisted_tags = '';
+
+thewatchlyst_position    = '5';
+
+if( thewatchlyst_isblacklist == 1 && thewatchlyst_position == 5 ){
+  //$("#thewatchlystalertButtonMobile").hide();
+  $(".twlinline").hide();
+}
+
+
+
+
+
+
+thewatchlystCode = function(){
+
+          
+
+
+if(document.getElementById('thewatchlystalertButton')) {
+  var testElement = document.getElementById('thewatchlystalertButton');
+  if (!testElement.classList.contains('twlnotext')) {
+    $('#thewatchlystalertButton').text('Notify Me When Price Drops');
+  }
+}
+
+if(document.getElementById('thewatchlystalertButtonMobile')) {
+  var testElement = document.getElementById('thewatchlystalertButtonMobile');
+  if (!testElement.classList.contains('twlnotext')) {
+    $('#thewatchlystalertButtonMobile').text('Notify Me When Price Drops');
+  }
+}
+
+
+
+
+window.addEventListener('message', function(event) {
+  if(event.data == 'closedTheWatchlystIframe') {
+      $('#thewatchlystIframe').hide();
+  }
+
+});
+  
+  function getCookie(cname) {
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for(var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') {
+              c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+              return c.substring(name.length, c.length);
+          }
+      }
+      return "";
+  }
+
+  function setCookie(cname,cvalue,exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+  var product = {{ product | json }};
+  
+  var variants = product.variants;
+  var placeholderimage = 'https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-product-1_large.png';
+
+  var iframe = '<iframe id="thewatchlystIframe" style="border: none; margin:0 auto; position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 2147483647;background: transparent;"><\/iframe>';
+  $('body').append(iframe);
+  var thewatchlystHtml = "<title>My Example<\/title><link rel=\"stylesheet\" href=\"https:\/\/maxcdn.bootstrapcdn.com\/bootstrap\/4.0.0\/css\/bootstrap.min.css\" integrity=\"sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW\/dAiS6JXm\" crossorigin=\"anonymous\"><style id=\"thewatchlystModalStyles\"><\/style><body style=\"background:none transparent;\"> <div class=\"container-fluid\"><div class=\"modal fade\" id=\"flipFlop\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"modalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog modal-lg\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\" id=\"thewatchlystModalHeader\" style=\"background-color:#00c0ff; color:#fff;\"><h5 class=\"modal-title\">Set Price Drop Alert<\/h5><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\" style=\"color:#fff;\"><span aria-hidden=\"true\">&times;<\/span><\/button><\/div><div class=\"modal-body\"><div class=\"container-fluid\"><div id=\"alertsuccessDiv\" style=\" top:0; left:0; z-index:999999; display:none\" class=\"bg-white position-absolute w-100 h-100 text-center align-middle justify-content-center align-items-center row m-0\"><h4 class=\"text-success\" style=\"\">Alert created successfully!<\/h4><\/div><div class=\"row\"><div class=\"col-12 col-sm-6 text-center\"><img style=\"max-height:200px;\" id=\"thewatchlystProductImage\" src=\"https:\/\/cdn.shopify.com\/s\/files\/1\/0533\/2089\/files\/placeholder-images-product-1_large.png\" class=\"img-thumbnail img-responsive\" alt=\"Feature Image\"> <p class=\"mt-2\" ><span id=\"thewatchlystProductTitle\"><\/span><br><span id=\"thewatchlystOptions\"><\/span><\/p><h6 class=\"text-muted\"><s id=\"thewatchlystComparePrice\">USD 99.00<\/s><\/h6><h5 id=\"thewatchlystPrice\">USD 79.00<\/h5><\/div><div class=\"col-xs-12 col-sm-6 text-center\"><form class=\"text-center mt-4\" id=\"thewatchlystAlertForm\"><div class=\"form-group\"><div class=\"input-group\"><div class=\"input-group-prepend\"><span class=\"input-group-text\" id=\"thewatchlystTargetPriceText\">Target<\/span><\/div> <input type=\"number\" name=\"targetprice\" class=\"form-control\" id=\"thewatchlystTargetPrice\" placeholder=\"55.00\"step=\"any\" min=\"0\"><\/div> <\/div><div class=\"form-group\"><div class=\"input-group\"><div class=\"input-group-prepend\"><span class=\"input-group-text\" id=\"thewatchlystTargetEmailText\">Email<\/span><\/div><input type=\"email\" name=\"email\" class=\"form-control\" id=\"thewatchlystEmail\" aria-describedby=\"emailHelp\" placeholder=\"john@gmail.com\"><\/div><\/div><button type=\"button\" id=\"thewatchlystAlertSubmit\" class=\"btn btn-lg mt-2\" style=\"background-color:#00c0ff; color:#fff;\">Submit<\/button> <div class=\"mt-4 \"><p class=\"text-success collapse\" id=\"thewatchlystSuccess\">Alert subscribed successfully.<\/p> <p class=\"text-danger collapse\" id=\"thewatchlystFail\">Target price should be lower than current price.<\/p> <\/div> <input type=\"hidden\" name=\"price\" id=\"thewatchlystPriceFinal\"> <input type=\"hidden\" name=\"compareprice\" id=\"thewatchlystComparePriceFinal\"><input type=\"hidden\" name=\"variantid\" id=\"thewatchlystVariantId\"><input type=\"hidden\" name=\"variant\" id=\"thewatchlystVariant\"><input type=\"hidden\" name=\"productid\" id=\"thewatchlystProductId\"><input type=\"hidden\" name=\"userid\" id=\"thewatchlystUserId\"><input type=\"hidden\" name=\"productimage\" id=\"thewatchlystImageFinal\"><input type=\"hidden\" name=\"producttitle\" id=\"thewatchlystTitleFinal\"><input type=\"hidden\" name=\"handle\" id=\"thewatchlystHandle\"><\/form><\/div><\/div><\/div><\/div><input type=\"hidden\" name=\"producttitle\" id=\"thewatchlystAlertUrl\"><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close<\/button><\/div><\/div><\/div><\/div><\/div><script src=\"https:\/\/ajax.googleapis.com\/ajax\/libs\/jquery\/3.2.1\/jquery.min.js\"><\/script><script src=\"https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/popper.js\/1.12.9\/umd\/popper.min.js\" integrity=\"sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K\/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q\" crossorigin=\"anonymous\"><\/script><script src=\"https:\/\/maxcdn.bootstrapcdn.com\/bootstrap\/4.0.0\/js\/bootstrap.min.js\" integrity=\"sha384-JZR6Spejh4U02d8jOt6vLEHfe\/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl\" crossorigin=\"anonymous\"><\/script><script>top.addEventListener(\"message\", function(event) {var price = parseFloat($(\"#thewatchlystPriceFinal\").val());$(\"#thewatchlystTargetPrice\").prop(\"max\",price);$(\"#flipFlop\").modal(\"show\");$(\"#alertsuccessDiv\").hide();});$(\"#flipFlop\").on(\"hide.bs.modal\", function () {top.postMessage(\"closedTheWatchlystIframe\",document.baseURI);});$(\"#thewatchlystTargetPrice\").bind(\"change\",function(){var targetprice = $(this).val();var compareprice = parseFloat($(\"#thewatchlystComparePriceFinal\").val());var price = parseFloat($(\"#thewatchlystPriceFinal\").val());if(compareprice <price){compareprice = price;}console.log(\"compareprice\",compareprice);var targetpercentage = parseFloat(100 - (targetprice\/compareprice)*100);targetpercentage = targetpercentage.toFixed(2);$(\"#thewatchlystTargetPercentage\").text(targetpercentage+\"% Discount\");});$(function () {$(\"#thewatchlystAlertSubmit\").on(\"click\", function () {$(\"#thewatchlystEmail\").removeClass(\"is-invalid\");var price = parseFloat($(\"#thewatchlystPriceFinal\").val());if($(\"#thewatchlystTargetPrice\").val().length == 0){$(\"#thewatchlystTargetPrice\").addClass(\"is-invalid\");$(\"#alertsuccessDiv\").hide();$(\"#thewatchlystFail\").text(\"Enter Valid Target Price.\");$(\"#thewatchlystFail\").show();return false;}var targetprice = parseFloat($(\"#thewatchlystTargetPrice\").val());var email = $(\"#thewatchlystEmail\").val();if(!validateEmail(email)){email = \"\";}else {setCookie(\"alertmail\",email,7);}if(targetprice >price) {$(\"#alertsuccessDiv\").hide();$(\"#thewatchlystFail\").text(\"Target price should be lower than current price.\");$(\"#thewatchlystFail\").show();} else if(email == \"\"){$(\"#thewatchlystEmail\").addClass(\"is-invalid\");$(\"#alertsuccessDiv\").hide();$(\"#thewatchlystFail\").text(\"Enter Valid Email Id.\");$(\"#thewatchlystFail\").show();} else {var data = $(\"#thewatchlystAlertForm\").serialize();console.log(data);var url = $(\"#thewatchlystAlertUrl\").val();$.ajax({type:\"POST\",url:url,data:data,success:function(data) {if(data.status == \"success\"){$(\"#thewatchlystFail\").hide();$(\"#alertsuccessDiv\").show();setTimeout(function(){$(\"#flipFlop\").modal(\"hide\")}, 2000);}}});}});});function validateEmail($email) { var emailReg = new RegExp(\/^[+a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$\/i); return emailReg.test( $email );}function setCookie(cname,cvalue,exdays) {var d = new Date();d.setTime(d.getTime() + (exdays*24*60*60*1000));var expires = \"expires=\" + d.toGMTString();document.cookie = cname + \"=\" + cvalue + \";\" + expires + \";path=\/\";}<\/script><\/body>";
+
+   var doc =  document.getElementById("thewatchlystIframe").contentWindow.document;
+  doc.open('text/html', 'replace');
+  doc.write(thewatchlystHtml); 
+  doc.close();
+
+  $('#thewatchlystIframe').hide();
+
+
+    $(document).on('click', '#thewatchlystalertButton,#thewatchlystalertButtonSvg,#thewatchlystalertButtonMobile', function() {
+     
+window.postMessage('openTheWatchlystModal',document.baseURI);
+checkAvailableorNotPm();
+
+   $('#thewatchlystIframe').contents().find('#thewatchlystProductTitle').text(product.title);
+  
+
+if(product.featured_image != null) {
+  $('#thewatchlystIframe').contents().find('#thewatchlystProductImage').attr("src", product.featured_image);
+}else if( variantfeatured_image != "") {
+  $('#thewatchlystIframe').contents().find('#thewatchlystProductImage').attr("src",variantfeatured_image);
+}else {
+  $('#thewatchlystIframe').contents().find('#thewatchlystProductImage').attr("src",placeholderimage);
+}
+
+
+var variantfeatured_image = getCookie("variantfeatured_image");
+if( variantfeatured_image != "") {
+	var variantsJSONString=JSON.stringify(variants); 
+  if(variantsJSONString.indexOf(variantfeatured_image) !=  -1){
+    $('#thewatchlystIframe').contents().find('#thewatchlystProductImage').attr("src",variantfeatured_image);
+  }
+}
+
+
+
+$('#thewatchlystIframe').contents().find('#thewatchlystUserId').val(359);
+$('#thewatchlystIframe').contents().find('#thewatchlystImageFinal').val(product.featured_image);
+$('#thewatchlystIframe').contents().find('#thewatchlystTitleFinal').val(product.title);
+$('#thewatchlystIframe').contents().find('#thewatchlystProductId').val(product.id);
+$('#thewatchlystIframe').contents().find('#thewatchlystAlertUrl').val('https://thewatchlyst.thalia-apps.com/subscribealert');
+$('#thewatchlystIframe').contents().find('#thewatchlystHandle').val(product.handle);
+
+var oldemail = getCookie("alertmail");
+if( oldemail != "") {
+  $('#thewatchlystIframe').contents().find('#thewatchlystEmail').val(oldemail);
+}
+
+var primarycolorForm = '#00c0ff';    
+$('#thewatchlystIframe').contents().find('#thewatchlystModalHeader').css("background-color", primarycolorForm);
+$('#thewatchlystIframe').contents().find('#thewatchlystAlertSubmit').css("background-color", primarycolorForm);
+var primarytextColor = '#FFFFFF';
+$('#thewatchlystIframe').contents().find('#thewatchlystModalHeader').css("color", primarytextColor);
+$('#thewatchlystIframe').contents().find('#thewatchlystAlertSubmit').css("color", primarytextColor);
+
+
+$('#thewatchlystIframe').contents().find('#thewatchlystModalStyles').html('');
+
+
+});
+
+
+function checkAvailableorNotPm(){
+var optionMap = [];
+
+$(".select:eq(0) .single-option-selector").each(function(key) {
+  optionMap[key] = $(this).val();
+
+});
+
+
+
+
+
+$(".single-option-selector").each(function(key) {
+  optionMap[key] = $(this).val();
+
+});
+
+
+if (optionMap.length === 0) {
+    $(".variants-ui__input-select").each(function(key) {
+        optionMap[key] = $(this).val();
+      
+      });
+    }
+
+
+
+ if (optionMap.length === 0) {
+ optionMap[0] = $.trim($('.current_option_name').text());
+}
+
+
+
+
+
+  var found = 0;
+  var fvalue = [];
+  var foptionMap = [];
+  var nvalue = [];
+  var noptionMap = [];
+  var available = false;
+var currentoption  = [];
+  variants.forEach(function(value, index) {
+    currentoption = value;
+  
+  if(JSON.stringify(value.options) == JSON.stringify(optionMap)) {
+
+        found = 1;
+         fvalue = value;
+        foptionMap = optionMap;
+        
+         
+
+  } else {
+       
+     if(found == 0){
+        if($('input[name="single-option-selector-0"]').length > 0) {
+
+       let selectedOption =  $.makeArray($("input[name='single-option-selector-0']:checked").val());
+      
+        
+        if(JSON.stringify(value.options) == JSON.stringify(selectedOption)) {
+           found = 1;
+         fvalue = value;
+        foptionMap = value.options;
+        }
+      
+     
+      
+    }else if( $('.block-swatch__radio').length > 1 && $('.color-swatch__radio').length > 1 ) {
+
+          let selectedOption = [];
+      selectedOption[0] = $('.color-swatch__radio:checked').val();
+      selectedOption[1] = $('.block-swatch__radio:checked').val();
+
+
+      
+        
+        if(JSON.stringify(value.options) == JSON.stringify(selectedOption)) {
+           found = 1;
+          fvalue = value;
+          foptionMap = value.options;
+        }
+      
+     
+      
+    }else if( $.trim($('.current_option_name').text()).length > 0 ) {
+       let selectedOption =  $.makeArray( $.trim($('.current_option_name').text()));
+      
+        
+        if(JSON.stringify(value.options) == JSON.stringify(selectedOption)) {
+           found = 1;
+          fvalue = value;
+          foptionMap = value.options;
+        }
+      
+     
+      
+    }else {
+      
+      found = 0;
+        nvalue = value;
+      noptionMap = value.options;
+    }
+   
+     }
+
+    
+  
+    //alertIframeCode(value,value.options);
+    
+  }
+
+  if (optionMap.length === 0) {
+    
+   found = 1;
+    fvalue = value;
+    foptionMap = value.options;
+
+    if(value.available === false){
+       
+      found = 0;
+    }
+  }
+
+
+
+});
+
+
+
+
+if(found == 0){
+  
+
+  
+   found = 1;
+    fvalue = currentoption;
+    foptionMap = currentoption.options;
+
+    if(currentoption.available === false){
+      found = 0;
+    }
+
+
+
+}
+
+
+
+
+if (foptionMap.length === 1) {
+  
+    if(fvalue.available === false){
+      found = 0;
+    }else{
+      found = 1;
+    }
+
+}
+
+
+  if (found) {
+
+          alertIframeCode(fvalue,foptionMap);
+           $('#thewatchlystIframe').contents().find("#thewatchlystFail").hide();
+           $('#thewatchlystIframe').contents().find("#thewatchlystAlertSubmit").attr("disabled", false);
+          
+       // $('#iframe1').show();
+      } else {
+          
+          alertIframeCode(nvalue,noptionMap);
+
+           $('#thewatchlystIframe').contents().find("#thewatchlystFail").text("Product unavailable.");
+           $('#thewatchlystIframe').contents().find("#thewatchlystFail").show();
+           $('#thewatchlystIframe').contents().find("#thewatchlystAlertSubmit").attr("disabled", true);
+           
+      }
+
+
+}
+
+function alertIframeCode(value,optionMap){
+ 
+  activecurrency = 'USD';
+  if ( typeof Shopify.currency !== 'undefined'){
+    activecurrency = Shopify.currency.active;
+  }
+
+  var thewatchlystOptions = optionMap.join("/ ");
+
+         available = value.available;
+         $('#thewatchlystIframe').contents().find('#thewatchlystProductId').val(value.id);
+         if(value.compare_at_price < value.price) {
+           $('#thewatchlystIframe').contents().find('#thewatchlystComparePrice').hide();
+         } else {
+           $('#thewatchlystIframe').contents().find('#thewatchlystComparePrice').text(activecurrency+' '+(value.compare_at_price*0.01).toFixed(2));
+         }
+
+        $('#thewatchlystIframe').contents().find('#thewatchlystPrice').text(activecurrency+' '+(value.price*0.01).toFixed(2));
+        if(thewatchlystOptions == 'Default Title'){
+          $('#thewatchlystIframe').contents().find('#thewatchlystOptions').text('');
+        } else {
+          $('#thewatchlystIframe').contents().find('#thewatchlystOptions').text('( '+thewatchlystOptions+' )');
+        }
+
+        
+        
+        var price = (value.price*0.01).toFixed(2);
+       
+        var targetprice = parseFloat(0.10*price);
+        
+        var targetprice = parseFloat(price-targetprice);
+        
+         var compareprice = (value.compare_at_price*0.01).toFixed(2);
+
+        
+         if(parseInt(compareprice) < parseInt(price)) {
+           var targetpercentage = parseFloat(price-targetprice);
+          
+            var targetrange = (targetpercentage/price)*100;
+         } else if(parseInt(price) == 0 ) {
+           var targetpercentage = 0;
+           
+           var targetrange = 0;
+         } else {
+          var targetpercentage = parseFloat(compareprice-targetprice);
+           
+           var targetrange = (targetpercentage/compareprice)*100;
+         }
+         
+
+
+        targetprice = targetprice.toFixed(2);
+        targetrange = targetrange.toFixed(2);
+
+            $('#thewatchlystIframe').contents().find('#thewatchlystTargetRange').val(targetrange);
+            $('#thewatchlystIframe').contents().find('#thewatchlystTargetPercentage').text(targetrange+'% Discount');
+            $('#thewatchlystIframe').contents().find('#thewatchlystTargetPrice').val(targetprice);
+            $('#thewatchlystIframe').contents().find('#thewatchlystTargetRange').prop('max',targetrange);
+
+            $('#thewatchlystIframe').contents().find('#thewatchlystComparePriceFinal').val((value.compare_at_price*0.01).toFixed(2));
+            $('#thewatchlystIframe').contents().find('#thewatchlystPriceFinal').val((value.price*0.01).toFixed(2));
+            $('#thewatchlystIframe').contents().find('#thewatchlystVariantId').val(value.id);
+            $('#thewatchlystIframe').contents().find('#thewatchlystVariant').val(thewatchlystOptions);
+           
+            if(value.featured_image != null && value.featured_image.src != undefined ) {
+              
+             var a = $('#thewatchlystIframe').contents().find('#thewatchlystProductImage').attr("src", value.featured_image.src);
+              
+              setCookie("variantfeatured_image",value.featured_image.src,7);
+            }
+
+
+
+
+        $('#thewatchlystIframe').show();
+}
+
+}//endof thewatchlystCode
+
+
+
+if (typeof jQuery == 'undefined') {
+
+    var script = document.createElement('script');
+    document.head.appendChild(script);
+    script.type = 'text/javascript';
+    script.src = '//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js';
+
+    script.onload = thewatchlystCode;
+
+} else {
+
+    thewatchlystCode();
+
+}
+
+
+
+
+
+
+</script>
